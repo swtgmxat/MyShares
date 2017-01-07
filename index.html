@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<!--
+Releases:
+V 0.0.1 ... erste öffentliche Version
+V 0.0.2 ... Icon ersetzt
+V 0.0.3 ... Fix Cash Bestandsberechnung
+V 0.0.4 ... Popup Info Fenster
+V 0.0.5 ... Renaming to MyShares und doBackup funktioniert jetzt ohne Neustart
+V 0.0.6 ... Refresh after add/delete/edit improved, doBackup trx sorted, resetAll moved to summary
+V 0.0.7 ... Added first Statistics page
+V 0.0.8 ... Added buy-info to sell/add transaction page
+V 0.0.9 ... Show Release Version in summary footer, improved statistic refresh
+V 0.1.0 ... Overview show Cash-Input, multiple add fixed
+V 1.0.0 ... Auto Gewinnermittlung/Steuerberechnung
+V 1.0.1 ... Korrektur Kauf Anzeige = 0 bei Edit
+V 1.0.2 ... Gewinn/Netto (-Gebühr) in Summary, Admin Page created, Auto-REFRESH on add/edit/sell TransaktionListe
+V 1.1.0 ... Round Statisiksums, ADDED Time to Date  for Daytrading
+V 1.1.1 ... Datum mit Uhrzeit eingeführt-Korrektur Buywert bei mehren Käufen = Korrektur bei Sell, auto Gewinnberechnung
+V 1.2.0 ... Steuersatz konfigurierbar
+V 1.2.1 ... Statistics page added yearly scrolling
+V 1.2.2 ... Fix Statistics incl. negativ taxes
+V 1.2.3 ... Statistics improvement
+-->
+
+<html>
+
+<head>
+    <title>MyShares</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet" href="css/jtsage-datebox-4.0.0.jqm.min.css">
+    <script src="main.js"></script>
+    <script src="js/jquery-2.2.2.js" type="text/javascript"></script>
+    <script src="js/jquery.mobile-1.4.5.js" type="text/javascript"></script>
+    <script src="js/Chart.min.js" type="text/javascript"></script>
+    <script src="js/gewinnverlust.js" type="text/javascript"></script>
+    <script src="js/storage.js" type="text/javascript"></script>
+    <script src="js/jtsage-datebox-4.0.0.jqm.js" type="text/javascript"></script>
+    <script src="js/stat.js" type="text/javascript"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta charset="utf-8" />
+</head>
+
+<body>
+
+    <!--Summary Page-->
+    <div data-role="page" id="page1">
+        <div data-role="header" data-theme="b">
+            <h1>MyShares - Summary</h1>
+        </div>
+        <div data-role="navbar">
+            <ul>
+                <li id="gotostatistics"><a href="#page3">Statistics</a></li>
+                <li id="save_file"><a href="#page1">doBackups</a></li>
+                <li id="get_file"><a href="#page1">getBackup</a></li>
+                <li id="gotoAdmin"><a href="#page5">Admin</a></li>
+                <li id="gotoHelp"><a href="#page6">Info/Help</a></li>
+
+            </ul>
+        </div>
+
+
+        <div data-role="main" class="ui-content">
+            <details>
+                <summary id="summary-table">Übersicht - Euro</summary>
+                <div id="summary-table-inhalt">
+                    <table data-role="table" id="summarytable" data-mode="columntoggle:none" class="table-stripe">
+                    </table>
+                </div>
+            </details>
+            <br>
+
+            <details>
+                <summary id="stock-table">Bestand - Wertpapiere</summary>
+                <table data-role="table" id="stocktable" data-mode="columntoggle:none" class="table-stripe">
+                </table>
+            </details>
+            <br>
+
+            <details>
+                <summary id="stock-table-all">Kein Bestand - Wertpapiere</summary>
+
+                <table data-role="table" id="stocktableall" data-mode="columntoggle:none" class="table-stripe">
+                </table>
+            </details>
+            <br>
+
+            <div id="Transaktion-table-div">
+                <details>
+                    <summary id="transaktion-table">Alle Transaktionen</summary>
+                    <input type="button" id="deleteButton" value="Delete" data-inline="true">
+                    <input type="button" id="editButton" value="Edit" data-inline="true">
+                    <input type="button" id="sellButton" value="Sell" data-inline="true">
+                    <input type="button" id="change2addButton" value="Add" data-inline="true">
+                    <div id="transaktion-table-inhalt">
+                        <table data-role="table" id="transaktiontable" data-filter="true" data-mode="columntoggle" class="table-stripe">
+                        </table>
+                    </div>
+                </details>
+
+            </div>
+
+        </div>
+        <div data-role="footer">
+            <h2>&copy;wstrommer</h2>
+            <div id="Release" align="center"></div>
+        </div>
+    </div>
+
+    <!--Add Transaction Page-->
+    <div data-role="page" id="page2">
+        <div data-role="header" data-theme="b">
+            <h1>MyShares - Add</h1>
+        </div>
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#page1">Summary</a></li>
+            </ul>
+        </div>
+        <div data-role="main" class="ui-content">
+
+            <!-- Input Daten -->
+            <form id="inputform">
+
+
+                <div class="ui-field-contain">
+                    <input type="hidden" id="Transid" name="Transid" data-role="text">
+                </div>
+
+                <div id="datepicker" class="ui-field-contain">
+                    <label for="Datum">Datum:</label>
+                    <input type="text" id="Datum" name="Datum" data-role="datebox" data-options='{"mode":"calbox", "useNewStyle":true, "useFocus":true, "useButton":false}'>
+                </div>
+
+                <div class="ui-field-contain">
+                    <label for="TransTyp1">TransTyp:</label> <select name="Transaktionstyp1" id="TransTyp1" class="validate-select">
+                <option value="Eingang">Eingang</option>
+                <option value="Ausgang">Ausgang</option>
+                <option value="Kauf">Kauf</option>
+                <option value="Verkauf">Verkauf</option>
+                <option value="Dividende">Dividende</option>
+            </select>
+                </div>
+
+                <div class="ui-field-contain">
+                    <label for="ISIN">ISIN:</label> <input type="text" id="ISIN" name="ISIN" data-role="text">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="Name">Name:</label> <input type="text" id="Name" name="Name" data-role="text">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="Stk">Stücke/Euro: </label> <input type="number" id="Stk" name="Stk" data-role="number">
+                </div>
+
+
+                <div class="ui-field-contain">
+                    <label for="Kurs">Kurs:</label> <input type="number" id="Kurs" name="Kurs" data-role="number" value="1">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="Gebuehr">Gebühren:</label> <input type="number" id="Gebuehr" name="Gebuehr" data-role="number">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="Steuern">Steuern:</label> <input type="number" id="Steuern" name="Steuern" data-role="number">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="GV">Gew_Verl:</label> <input type="number" id="GV" name="GV" data-role="number">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="Zustand">Zustand:</label> <select name="Zustand" id="Zustand">
+                <option value="abgerechnet">abgerechnet</option>
+                <option value="offen">offen</option>
+            </select>
+                </div>
+
+            </form>
+
+            <div data-role='controlgroup' data-type="horizontal">
+                <button type="button" id="add">add</button>
+                <a href="#page1" data-role="button">cancel</a>
+
+            </div>
+        </div>
+        <div data-role="footer">
+            <h2>&copy;wstrommer</h2>
+        </div>
+    </div>
+
+    <!--Statistics Page-->
+    <div data-role="page" id="page3">
+        <div data-role="header" data-theme="b">
+            <h1>MyShares - Statistics</h1>
+        </div>
+        <div data-role="navbar" data-iconpos="left">
+            <ul>
+                <li><a href="#page1" data-icon="home">Summary</a></li>
+                <li id="DiesesJahr"><a href="#">This Year</a></li>
+                <li id="JahrZurueck"><a href="#">Back</a></li>
+                <li id="JahrVoran"><a href="#">Forward</a></li>
+            </ul>
+        </div>
+        <div data-role="main" class="ui-content">
+
+            <!-- Auswahl Jahr -->
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <!-- Input Daten Statistik-->
+                    <div id="container" style="width: 90%;">
+<canvas id="myChart" width="200" height="200"></canvas>
+</div>
+</div>
+<div class="ui-block-b">
+    <div id="AnzTrans"></div>
+    <div id="GewinnVerlust"></div>
+    <div id="GebuehrenproJahr"></div>
+
+</div>
+</div>
+<!-- /grid-a -->
+</div>
+
+<div data-role="footer">
+    <h2>&copy;wstrommer</h2>
+</div>
+</div>
+
+<!--Sell Transaction Page-->
+<div data-role="page" id="page4">
+    <div data-role="header" data-theme="b">
+        <h1>MyShares - Sell</h1>
+    </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#page1">Summary</a></li>
+            <li><a href="#page3">Statistics</a></li>
+        </ul>
+    </div>
+    <div data-role="main" class="ui-content">
+
+        <!-- Input Daten -->
+        <div id="buyinfo" style="text-align: center"></div>
+<form id="inputformsell">
+
+    <div class="ui-field-contain">
+        <input type="hidden" id="Transidsell" name="Transid" data-role="text">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Datumsell">Datum:</label>
+        <input type="text" id="Datumsell" name="Datum" data-role="datebox" data-options='{"mode":"calbox", "useNewStyle":true, "useFocus":true, "useButton":false}'>
+    </div>
+    <div class="ui-field-contain">
+        <label for="TransTyp1sell">TransTyps</label> <select name="Transaktionstyp1" id="TransTyp1sell" class="validate-select">
+                <option value="Eingang">Eingang</option>
+                <option value="Ausgang">Ausgang</option>
+                <option value="Kauf">Kauf</option>
+                <option value="Verkauf">Verkauf</option>
+                <option value="Dividende">Dividende</option>
+            </select>
+    </div>
+    <div class="ui-field-contain">
+        <label for="ISINsell">ISIN:</label> <input type="text" id="ISINsell" name="ISIN" data-role="text">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Namesell">Name:</label> <input type="text" id="Namesell" name="Name" data-role="text">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Stksell">Stücke/Euro: </label> <input type="number" id="Stksell" name="Stk" data-role="number">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Kurssell">Kurs:</label> <input type="number" id="Kurssell" name="Kurs" data-role="number" value="1">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Gebuehrsell">Gebühren:</label> <input type="number" id="Gebuehrsell" name="Gebuehr" data-role="number">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Steuernsell">Steuern:</label> <input type="number" id="Steuernsell" name="Steuern" data-role="number">
+    </div>
+    <div class="ui-field-contain">
+        <label for="GVsell">Gew_Verl:</label> <input type="number" id="GVsell" name="GV" data-role="number">
+    </div>
+    <div class="ui-field-contain">
+        <label for="Zustandsell">Zustand:</label> <select name="Zustand" id="Zustandsell">
+                <option value="abgerechnet">abgerechnet</option>
+                <option value="offen">offen</option>
+            </select>
+    </div>
+</form>
+
+<div data-role='controlgroup' data-type="horizontal">
+    <button type="button" id="addsell">add</button>
+    <a href="#page1" data-role="button">cancel</a>
+</div>
+</div>
+<div data-role="footer">
+    <h2>&copy;wstrommer</h2>
+</div>
+</div>
+
+<!--Admin Page-->
+<div data-role="page" id="page5">
+    <div data-role="header" data-theme="b">
+        <h1>MyShares - Admin</h1>
+    </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#page1">Summary</a></li>
+        </ul>
+    </div>
+    <div data-role="main" class="ui-content">
+
+
+        <div data-role='controlgroup' data-type="horizontal">
+            <button type="button" id="TaxRate">Steuersatz</button>
+            <button type="button" id="clear_storage">resetAll - Achtung!</button>
+        </div>
+    </div>
+    <div data-role="footer">
+        <h2>&copy;wstrommer</h2>
+    </div>
+</div>
+
+<!--Help/Info Page-->
+<div data-role="page" id="page6">
+    <div data-role="header" data-theme="b">
+        <h1>MyShares - Info/Help</h1>
+    </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#page1">Summary</a></li>
+        </ul>
+    </div>
+    <div data-role="main" class="ui-content">
+
+        <div id="ReleasenoteRelease" align="center"></div>
+        <p>Releases:</p>
+        V 0.0.1 ... erste öffentliche Version<br> V 0.0.2 ... Icon ersetzt<br> V 0.0.3 ... Fix Cash Bestandsberechnung<br>        V 0.0.4 ... Popup Info Fenster<br> V 0.0.5 ... Renaming to MyShares und doBackup funktioniert jetzt ohne Neustart<br>        V 0.0.6 ... Refresh after add/delete/edit improved, doBackup trx sorted, resetAll moved to summary<br> V 0.0.7 ...
+        Added first Statistics page<br> V 0.0.8 ... Added buy-info to sell/add transaction page<br> V 0.0.9 ... Show Release
+        Version in summary footer, improved statistic refresh<br> V 0.1.0 ... Overview show Cash-Input, multiple add fixed<br>        V 1.0.0 ... Auto Gewinnermittlung/Steuerberechnung<br> V 1.0.1 ... Korrektur Kauf Anzeige = 0 bei Edit<br> V 1.0.2
+        ... Gewinn/Netto (-Gebühr) in Summary, Admin Page created, Auto-REFRESH on add/edit/sell TransaktionListe
+        <br> V 1.0.3 ... Round Statisiksums <br> V 1.1.1 ... Datum mit Uhrzeit eingeführt -Korrektur Buywert bei mehren Käufen
+        = Korrektur bei Sell, auto Gewinnberechnung
+        <br> V 1.2.0 ... Steuersatz definierbar<br> V 1.2.1 ... Statistics page added yearly scrolling<br> V 1.2.2 ... Fix
+        Statistics incl. negativ taxes<br> V 1.2.3 ... Statistics improvement<br>
+
+
+    </div>
+    <div data-role="footer">
+        <h2>&copy;wstrommer</h2>
+    </div>
+</div>
+
+<!--Set Steuersatz Page-->
+<div data-role="page" id="page7">
+    <div data-role="header" data-theme="b">
+        <h1>MyShares - Settings</h1>
+    </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#page1">Summary</a></li>
+        </ul>
+    </div>
+    <div data-role="main" class="ui-content">
+
+        <br> Steuersatz für Kapitalerträge hier festsetzen, z.B. für Österreich aktuell 27,5
+
+        <div id="SteuersatzSetzen" align="right"></div>
+
+        <div class="ui-field-contain">
+            <label for="Steuersatz">Steuersatz:</label> <input type="number" id="Steuersatz" name="Steuersatz" data-role="number"
+                value="27.5">
+        </div>
+        <div data-role='controlgroup' data-type="horizontal">
+            <button type="button" id="SaveTaxRate">save</button>
+        </div>
+
+    </div>
+    <div data-role="footer">
+        <h2>&copy;wstrommer</h2>
+    </div>
+</div>
+
+<!--Edit Transaction Page-->
+<div data-role="page" id="page8">
+    <div data-role="header" data-theme="b">
+        <h1>MyShares - Edit</h1>
+    </div>
+    <div data-role="navbar">
+        <ul>
+            <li><a href="#page1">Summary</a></li>
+        </ul>
+    </div>
+    <div data-role="main" class="ui-content">
+
+        <!-- Input Daten -->
+        <form id="inputformedit">
+
+
+            <div class="ui-field-contain">
+                <input type="hidden" id="Transidedit" name="Transid" data-role="text">
+            </div>
+
+            <div id="datepickeredit" class="ui-field-contain">
+                <label for="Datumedit">Datum:</label>
+                <input type="text" id="Datumedit" name="Datum" data-role="datebox" data-options='{"mode":"calbox", "useNewStyle":true, "useFocus":true, "useButton":false}'>
+            </div>
+
+            <div class="ui-field-contain">
+                <label for="TransTyp1edit">TransTyp:</label> <select name="Transaktionstyp1" id="TransTyp1edit" class="validate-select">
+                <option value="Eingang">Eingang</option>
+                <option value="Ausgang">Ausgang</option>
+                <option value="Kauf">Kauf</option>
+                <option value="Verkauf">Verkauf</option>
+                <option value="Dividende">Dividende</option>
+            </select>
+            </div>
+
+            <div class="ui-field-contain">
+                <label for="ISINedit">ISIN:</label> <input type="text" id="ISINedit" name="ISIN" data-role="text">
+            </div>
+            <div class="ui-field-contain">
+                <label for="Nameedit">Name:</label> <input type="text" id="Nameedit" name="Name" data-role="text">
+            </div>
+            <div class="ui-field-contain">
+                <label for="Stkedit">Stücke/Euro: </label> <input type="number" id="Stkedit" name="Stk" data-role="number">
+            </div>
+
+
+            <div class="ui-field-contain">
+                <label for="Kursedit">Kurs:</label> <input type="number" id="Kursedit" name="Kurs" data-role="number" value="1">
+            </div>
+            <div class="ui-field-contain">
+                <label for="Gebuehredit">Gebühren:</label> <input type="number" id="Gebuehredit" name="Gebuehr" data-role="number">
+            </div>
+            <div class="ui-field-contain">
+                <label for="Steuernedit">Steuern:</label> <input type="number" id="Steuernedit" name="Steuern" data-role="number">
+            </div>
+            <div class="ui-field-contain">
+                <label for="GVedit">Gew_Verl:</label> <input type="number" id="GVedit" name="GV" data-role="number">
+            </div>
+            <div class="ui-field-contain">
+                <label for="Zustandedit">Zustand:</label> <select name="Zustand" id="Zustandedit">
+                <option value="abgerechnet">abgerechnet</option>
+                <option value="offen">offen</option>
+            </select>
+            </div>
+
+        </form>
+
+        <div data-role='controlgroup' data-type="horizontal">
+            <button type="button" id="edit">save</button>
+            <a href="#page1" data-role="button">cancel</a>
+
+        </div>
+    </div>
+    <div data-role="footer">
+        <h2>&copy;wstrommer</h2>
+    </div>
+</div>
+
+
+</body>
+
+</html>

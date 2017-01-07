@@ -1,0 +1,7 @@
+html{
+    overflow-y:scroll;
+    webkit-user-select: text;
+}
+summary {
+    font-size:larger;color:#020000;font-weight: bold}
+

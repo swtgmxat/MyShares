@@ -26,12 +26,12 @@ window.onload = $(function () {
     window.document.getElementById('Release').innerHTML = ReleaseVersion;
     window.document.getElementById('ReleasenoteRelease').innerHTML = ReleaseVersion;
 
-// Steuersatz auslesen
+    // Steuersatz auslesen
     steuersatzread = "";
     chrome.storage.local.get('Steuersatz', function (result) {
         steuersatzread = result.Steuersatz;
         console.log(steuersatzread);
-        if (steuersatzread == undefined){
+        if (steuersatzread == undefined) {
             chrome.app.window.create(urlpopupkeinsteuersatz, function (window) {
                 //do something with your window
                 //window.document.getElementById('newpopupEntry').innerHTML = value;
@@ -80,7 +80,7 @@ $(document).ready(function () {
             //var key="myKey";
 
             var heute = new Date().toISOString().slice(11, -8);
-            console.log(heute, typeof(heute), Datumget, typeof(Datumget));
+            console.log(heute, typeof (heute), Datumget, typeof (Datumget));
             var DateTime = Datumget.concat(" ").concat(heute);
             console.log(DateTime);
 
@@ -237,7 +237,7 @@ $(document).ready(function () {
             //var insertkey = Ownerget + Datumget + Transtyp1get + Isinget;
             //var key="myKey";
             var heute = new Date().toISOString().slice(11, -8);
-            console.log(heute, typeof(heute), Datumget, typeof(Datumget));
+            console.log(heute, typeof (heute), Datumget, typeof (Datumget));
             var DateTime = Datumget.concat(" ").concat(heute);
             console.log(DateTime);
 
@@ -445,7 +445,7 @@ $(document).ready(function () {
             // var inserttrans = JSON.parse(chrome.storage.local.getItem("insertKey"));
             // alert(1024 * 1024 * 5 - unescape(encodeURIComponent(JSON.stringify(chrome.storage.local))).length);
         } else
-        //alert('Es fehlen Daten! Datum, Kurs, oder Stk?');
+            //alert('Es fehlen Daten! Datum, Kurs, oder Stk?');
             console.log('Es fehlen Daten! Datum, Kurs, oder Stk?');
         $.mobile.changePage('#page1');
 
@@ -631,7 +631,7 @@ $(document).ready(function () {
             chrome.storage.local.get('Steuersatz', function (result) {
                 steuersatzread = result.Steuersatz;
                 console.log(steuersatzread);
-                if (steuersatzread == undefined){
+                if (steuersatzread == undefined) {
                     chrome.app.window.create(urlpopupkeinsteuersatz, function (window) {
                         //do something with your window
                         //window.document.getElementById('newpopupEntry').innerHTML = value;
@@ -876,8 +876,8 @@ $(document).ready(function () {
         chrome.fileSystem.chooseEntry(
             {
                 type: 'openFile', accepts: [{
-                extensions: ['txt']
-            }]
+                    extensions: ['txt']
+                }]
             },
             function (fileEntry) {
                 if (!fileEntry) {
@@ -957,7 +957,7 @@ $(document).ready(function () {
                     alltrans.forEach(function (trx) {
                         //var isinnr = isi;
                         var transaktionen = JSON.stringify(trx);
-                        var transid = trx[0] + "," + trx [1] + "," + trx[2] + "," + trx[3] + "," + trx[4] + "," + trx[5] + "," + trx[6] + "," + trx[7] + "," + trx[8] + "," + trx[9] + "," + trx[10] + "\n";
+                        var transid = trx[0] + "," + trx[1] + "," + trx[2] + "," + trx[3] + "," + trx[4] + "," + trx[5] + "," + trx[6] + "," + trx[7] + "," + trx[8] + "," + trx[9] + "," + trx[10] + "\n";
                         console.log(transaktionen);
                         //trxliste.push(transid);
                         trxliste += transid.split(",");
@@ -970,7 +970,7 @@ $(document).ready(function () {
                 }),
 
 
-                    chrome.fileSystem.chooseEntry({type: 'saveFile'}, function (f) {
+                    chrome.fileSystem.chooseEntry({ type: 'saveFile' }, function (f) {
                         console.log("File picked");
 
                         f.createWriter(function (writer) {
@@ -988,7 +988,7 @@ $(document).ready(function () {
                                 console.log("Write");
                                 console.log(e);
                             };
-                            var blob = new Blob([trxliste], {type: 'text/plain'});
+                            var blob = new Blob([trxliste], { type: 'text/plain' });
                             writer.write(blob);
                         })
                     })
@@ -1018,7 +1018,7 @@ $(document).ready(function () {
         function savesteuersatzsetzen() {
             var steuersatztodb = document.getElementById('Steuersatz').value;
             console.log(steuersatztodb);
-            chrome.storage.local.set({'Steuersatz': steuersatztodb});
+            chrome.storage.local.set({ 'Steuersatz': steuersatztodb });
             $.mobile.changePage('#page1');
         });
 });

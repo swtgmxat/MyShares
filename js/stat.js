@@ -16,10 +16,10 @@ $(document).ready(function () {
         function showStats() {
 
 
-//window.onload = $(function () {
+            //window.onload = $(function () {
             /** This code runs when everything has been loaded on the page */
-                // var d = new Date();
-                // var aktjahr =d.getFullYear();
+            // var d = new Date();
+            // var aktjahr =d.getFullYear();
             var d = new Date();
             //var aktjahr = d.getFullYear();
             console.log(aktjahr);
@@ -154,7 +154,7 @@ $(document).ready(function () {
 
 
                     // Replace the chart canvas element
-// Diagram erstellen
+                    // Diagram erstellen
                     var ctx = document.getElementById("myChart");
                     console.log("Schreibe Diagramm");
                     var myChart = new Chart(ctx, {
@@ -189,7 +189,7 @@ $(document).ready(function () {
         function showStats() {
 
 
-//window.onload = $(function () {
+            //window.onload = $(function () {
             /** This code runs when everything has been loaded on the page */
             var d = new Date();
             aktjahr = d.getFullYear();
@@ -331,7 +331,7 @@ $(document).ready(function () {
 
 
                     // Replace the chart canvas element
-// Diagram erstellen
+                    // Diagram erstellen
                     var ctx = document.getElementById("myChart");
                     console.log("Schreibe Diagramm");
                     var myChart = new Chart(ctx, {
@@ -366,7 +366,7 @@ $(document).ready(function () {
         function showStats() {
 
 
-//window.onload = $(function () {
+            //window.onload = $(function () {
             /** This code runs when everything has been loaded on the page */
             // var d = new Date();
             // var aktjahr =d.getFullYear();
@@ -507,7 +507,7 @@ $(document).ready(function () {
 
 
                     // Replace the chart canvas element
-// Diagram erstellen
+                    // Diagram erstellen
                     var ctx = document.getElementById("myChart");
                     console.log("Schreibe Diagramm");
                     var myChart = new Chart(ctx, {
@@ -542,7 +542,7 @@ $(document).ready(function () {
         function showStats() {
 
 
-//window.onload = $(function () {
+            //window.onload = $(function () {
             /** This code runs when everything has been loaded on the page */
             // var d = new Date();
             // var aktjahr =d.getFullYear();
@@ -684,7 +684,7 @@ $(document).ready(function () {
 
 
                     // Replace the chart canvas element
-// Diagram erstellen
+                    // Diagram erstellen
                     var ctx = document.getElementById("myChart");
                     console.log("Schreibe Diagramm");
                     var myChart = new Chart(ctx, {

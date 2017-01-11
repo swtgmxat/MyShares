@@ -2,7 +2,7 @@ var Cash = 0;
 var CashInput = 0;
 var isinliste = [];
 var d = new Date();
-var aktjahr =d.getFullYear();
+var aktjahr = d.getFullYear();
 
 
 // Bestand in Euro div id="summary-table"
@@ -69,23 +69,23 @@ $(document).ready(function () {
                         WertDivi = 1 * stkausdb;
 
 
-//Eingänge
+                        //Eingänge
                         if (transtypausdb == "Eingang") {
                             Eingang += Wert;
                         }
-//Ausgänge
+                        //Ausgänge
                         if (transtypausdb == "Ausgang") {
                             Ausgang += Wert;
                         }
-//Käufe
+                        //Käufe
                         if (transtypausdb == "Kauf") {
                             Kauf += Wert;
                         }
-//Verkäufe
+                        //Verkäufe
                         if (transtypausdb == "Verkauf") {
                             Verkauf += Wert;
                         }
-//Dividende
+                        //Dividende
                         //Dividende = 0;
                         if (transtypausdb == "Dividende") {
                             Dividende += WertDivi;
@@ -93,13 +93,13 @@ $(document).ready(function () {
 
                         }
 
-//Gebühren
+                        //Gebühren
                         Gebuehr += Wertgebuehren;
-//Steuern
+                        //Steuern
                         Steuern += Wertsteuern;
-//GewinnVerlust
+                        //GewinnVerlust
                         GV += WertGV;
-// Verfügbare Cash
+                        // Verfügbare Cash
                     }
                     GV += Dividende;
                     GV = Math.round(GV - Gebuehr);

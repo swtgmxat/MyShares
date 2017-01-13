@@ -14,12 +14,6 @@ var gebuehrenyearly;
 $(document).ready(function () {
     $("#gotostatistics").bind("click",
         function showStats() {
-
-
-            //window.onload = $(function () {
-            /** This code runs when everything has been loaded on the page */
-            // var d = new Date();
-            // var aktjahr =d.getFullYear();
             var d = new Date();
             //var aktjahr = d.getFullYear();
             console.log(aktjahr);
@@ -364,12 +358,6 @@ $(document).ready(function () {
 $(document).ready(function () {
     $("#JahrZurueck").bind("click",
         function showStats() {
-
-
-            //window.onload = $(function () {
-            /** This code runs when everything has been loaded on the page */
-            // var d = new Date();
-            // var aktjahr =d.getFullYear();
             aktjahr = aktjahr - 1;
             //console.log(aktjahr);
             var mm_liste = [];
@@ -540,12 +528,6 @@ $(document).ready(function () {
 $(document).ready(function () {
     $("#JahrVoran").bind("click",
         function showStats() {
-
-
-            //window.onload = $(function () {
-            /** This code runs when everything has been loaded on the page */
-            // var d = new Date();
-            // var aktjahr =d.getFullYear();
             aktjahr = aktjahr + 1;
             console.log(aktjahr);
             var mm_liste = [];
